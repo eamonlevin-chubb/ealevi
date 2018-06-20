@@ -1,0 +1,439 @@
+
+<html>
+<head>
+  <title > Mape Testing 2 </title>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/Pre60/myTest/master/leaflet.label.css"/>
+
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script> 
+
+   <script src="https://cdn.rawgit.com/Pre60/myTest/master/leaflet.label.js"></script> 
+
+  <!-- css --> 
+  <link rel="stylesheet" href="./css/Mexico_Map.css">
+</head>
+<body>
+
+    <div id="map" ></div>
+
+   
+
+
+<script> 
+  /* ##########   INITIALIZE THE MAP ########## */
+
+var map = L.map('map').setView([23.4325, -101.1329], 6); /* Starting coordinates and zoom */
+mapLink =
+    '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+    
+    /* ##########  MAP IMAGE ########## */
+ L.tileLayer(
+    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; ' + mapLink,
+    maxZoom: 18,
+    }).addTo(map); 
+
+
+   
+    
+    
+  function functName(numSelected)
+   {
+
+  if (document.getElementById("2015").checked) 
+
+          {
+
+        $.getJSON("https://cdn.rawgit.com/Pre60/myTest/master/MEX_adm2.json", function(data) {
+        var Mex_zipcodes = L.geoJson(data, {
+        style: style,
+        onEachFeature: onEachFeature 
+        }).addTo(map); 
+
+        var info = L.control(); 
+
+        info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div; 
+        }; 
+
+    
+
+        info.update = function (props) {
+        this._div.innerHTML =  "<h4>Premiums</h4>" + (props ?
+        '<b>' + props.NAME_2 + '</b><br />' + props.LOSS_RATIO + ' Premiums</sup>'
+        : 'Hover over the zipcode');
+        }; 
+
+       info.addTo(map);   
+
+      function highlightFeature(e) {
+      var layer = e.target;
+
+      layer.setStyle({
+        weight: 3,
+        color: '#00FFA0',
+        dashArray: '',
+        fillOpacity: 0.5
+      }); 
+
+      if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+      }
+
+      info.update(layer.feature.properties);
+      } //hasta aqui function highlight
+
+      function resetHighlight(e) {
+        Mex_zipcodes.resetStyle(e.target);
+        info.update();
+      }
+
+      function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.bindLabel(feature.properties.LOSS_RATIO.toString(), {noHide: true})
+        layer.on({
+          mouseover: highlightFeature,
+          mouseout: resetHighlight,
+          click: zoomToFeature
+        });
+      };
+
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+
+      map.on('draw:created', function (e) {
+          var type = e.layerType,
+              layer = e.layer;
+          drawnItems.addLayer(layer);
+      });
+
+    } );
+    
+
+
+
+      function style(feature) {
+        return {
+          weight: 1,
+          opacity: 1,
+          color: 'white',
+          dashArray: '3',
+          fillOpacity: 1,
+          fillColor: getColor1(feature.properties.LOSS_RATIO)};
+        } 
+  
+
+        var legendClaims = L.control({position: 'bottomleft'});
+        legendClaims.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legendClaims'),
+          grades = [0.2,0.4,0.6,0.8,1.0,1.2],
+          labels = [],
+          from, to;
+
+        for (var i = 0; i < grades.length; i++) {
+          from = grades[i];
+          to = grades[i + 1];
+
+          labels.push(
+              '<i style="background:' + getColor1(from /*+ 1*/) + '"></i> ' +
+              from + (to ? '&ndash;' + to : '+'));
+        }
+
+        div.innerHTML = labels.join('<br>');
+        return div;
+        };
+   
+        
+          legendClaims.addTo(map);
+            
+        }
+
+      else if (document.getElementById("2016").checked) 
+
+      { 
+          $.getJSON("https://cdn.rawgit.com/Pre60/myTest/master/MEX_adm2.json", function(data) {
+        var Mex_zipcodes = L.geoJson(data, {
+        style: style,
+        onEachFeature: onEachFeature 
+        }).addTo(map); 
+
+        var info = L.control(); 
+
+        info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div; 
+        }; 
+
+    
+
+        info.update = function (props) {
+        this._div.innerHTML =  "<h4>Premiums</h4>" + (props ?
+        '<b>' + props.NAME_2 + '</b><br />' + props.LOSS_RATIO + ' Premiums</sup>'
+        : 'Hover over the zipcode');
+        }; 
+
+       info.addTo(map);
+
+      function highlightFeature(e) {
+      var layer = e.target;
+
+      layer.setStyle({
+        weight: 3,
+        color: '#00FFA0',
+        dashArray: '',
+        fillOpacity: 0.5
+      }); 
+
+      if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+      }
+
+      info.update(layer.feature.properties);
+      } //hasta aqui function highlight
+
+      function resetHighlight(e) {
+        Mex_zipcodes.resetStyle(e.target);
+        info.update();
+      }
+
+      function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.bindLabel(feature.properties.LOSS_RATIO.toString(), {noHide: true})
+        layer.on({
+          mouseover: highlightFeature,
+          mouseout: resetHighlight,
+          click: zoomToFeature
+        });
+      };
+
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+
+      map.on('draw:created', function (e) {
+          var type = e.layerType,
+              layer = e.layer;
+          drawnItems.addLayer(layer);
+      });
+
+    } );
+    
+
+
+
+      function style(feature) {
+        return {
+          weight: 0.5,
+          opacity: 1,
+          color: 'white',
+          dashArray: '3',
+          fillOpacity: 0.7,
+          fillColor: getColor3(feature.properties.LOSS_RATIO)};
+        } 
+  
+
+        var legendPrem = L.control({position: 'bottomleft'});
+        legendPrem.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legendPrem'),
+          grades = [0.2,0.4,0.6,0.8,1.0,1.2],
+          labels = [],
+          from, to;
+
+        for (var i = 0; i < grades.length; i++) {
+          from = grades[i];
+          to = grades[i + 1];
+
+          labels.push(
+              '<i style="background:' + getColor3(from /*+ 1*/) + '"></i> ' +
+              from + (to ? '&ndash;' + to : '+'));
+        }
+
+        div.innerHTML = labels.join('<br>');
+        return div;
+        };
+   
+        
+          legendPrem.addTo(map);
+      }
+
+    } 
+    
+          
+
+  
+
+ 
+ 
+
+  function getColor1(d) {
+       return d > 1.1 ? '#000004' :
+         d > 1.04 ? '#3B0F70' :
+         d > 0.98 ? '#471078' :
+         d > 0.92 ? '#6A1C81' :
+         d > 0.86 ? '#902A81' :
+         d > 0.80 ? '#AB337C' :
+         d > 0.74 ? '#BC3978' :
+         d > 0.68 ? '#CC3F71' :
+         d > 0.62 ? '#DB476A' :
+         d > 0.56 ? '#E44F64' :
+         d > 0.50 ? '#E75263' :
+         d > 0.44 ? '#F1605D' :
+         d > 0.38 ? '#F66C5C' :
+         d > 0.32 ? '#FD9A6A' :
+         d > 0.26 ? '#FEBF84' :
+         '#FED597';
+        } 
+
+
+  function getColor2(d) {
+       return d > 1.1 ? '#000004' :
+         d > 1.04 ? '#2c7bb6' :
+         d > 0.98 ? '#00a6ca' :
+         d > 0.92 ? '#00ccbc' :
+         d > 0.86 ? '#902A81' :
+         d > 0.80 ? '#90eb9d' :
+         d > 0.74 ? '#ffff8c' :
+         d > 0.68 ? '#CC3F71' :
+         d > 0.62 ? '#f9d057' :
+         d > 0.56 ? '#f29e2e' :
+         d > 0.50 ? '#e76818' :
+         d > 0.44 ? '#F1605D' :
+         d > 0.26 ? '#d7191c' :
+         '#FED597';
+        } 
+
+  function getColor3(d) {
+       return d > 1.1 ? '#000004' :
+         d > 1.04 ? '#FFCCCC' :
+         d > 0.98 ? '#FF9999' :
+         d > 0.92 ? '#FF6666' :
+         d > 0.86 ? '#FF3333' :
+         d > 0.80 ? '#FF0000' :
+         d > 0.74 ? '#CC0000' :
+         d > 0.68 ? '#CC3F71' :
+         d > 0.62 ? '#990000' :
+         d > 0.56 ? '#660000' :
+         d > 0.50 ? '#330000' :
+         '#FED597';
+        } 
+
+  function getColor4(d) {
+       return d > 1.1 ? '#000004' :
+         d > 1.04 ? '#CCFFCC' :
+         d > 0.98 ? '#99FF99' :
+         d > 0.92 ? '#66FF66' :
+         d > 0.86 ? '#33FF33' :
+         d > 0.80 ? '#00FF00' :
+         d > 0.74 ? '#00CC00' :
+         d > 0.68 ? '#009900' :
+         d > 0.62 ? '#006600' :
+         d > 0.56 ? '#003300' :
+         d > 0.50 ? '#330000' :
+         '#FED597';
+        } 
+
+
+  /* %%%%%%%%%%%%%%%%%%   Initializing all the items (menus, legends, etc...)   %%%%%%%%%%%%%%%%%%%%% */
+
+
+    function cbChange(obj) {
+      var cbs = document.getElementsByClassName("cb");
+      for (var i = 0; i < cbs.length; i++) {
+          cbs[i].checked = false;
+      }
+      obj.checked = true;
+      }
+
+
+
+  var check = L.control({position: 'bottomleft'});
+  check.onAdd = function (map) {
+  var div = L.DomUtil.create('div', 'info check');
+  div.innerHTML = ' <input class="cb" id="2015" onClick="cbChange(this); functName(this);" type="checkbox"> 2015  <input class="cb" id="2016" onClick="cbChange(this); functName(this);"  type="checkbox"> 2016 ';
+
+  // <input class="cb" id="2017" onClick="cbChange(this); functName(this);"  type="checkbox"> 2017
+
+
+  div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+    return div;
+    };
+
+
+  check.addTo(map);
+
+  // Removal TESTS 
+
+  var debugvar; 
+
+  var others=1; 
+
+     // Add and remove layers
+        map.on('overlayadd', function (eventLayer) {
+            // Switch to the Permafrost legend...
+            if (document.getElementById("2015").checked) {
+               // legend2.removeFrom(map);
+                legendClaims.addTo(map);
+            } else { // Or switch to the treeline legend...
+              if(others<1)
+              {
+               legendPrem.addTo(map);
+              }
+                others++; // legend1.removeFrom(map);
+               // legend2.addTo(map);
+            }
+        });
+
+         map.on('overlayremove', function (eventLayer) {
+            debugvar=eventLayer;
+            //console.log(eventLayer.name);
+            // Switch to the Permafrost legend...
+             if ((document.getElementById("2015").checked) {
+        this.removeControl(legendPrem);
+      //  legend1.addTo(this);
+    } else { // Or switch to the Population Change legend...
+        others--;
+        if(others<1)
+        {
+         this.removeControl(legendClaims);
+        }////  this.removeControl(legend2);
+   //     legend1.addTo(this);
+    }
+        });
+
+         map.on('overlayremove', function (eventLayer) {
+            // Switch to the Permafrost legend...
+            if ((document.getElementById("2015").checked) {
+              //  map.removeControl(legend1);
+              //  legend2.addTo(map);
+            } else { // Or switch to the treeline legend...
+               // this.removeControl(legend2);
+               // legend1.addTo(map);
+            }
+        });
+  
+
+  
+</script>
+
+
+</body>
+</html>
